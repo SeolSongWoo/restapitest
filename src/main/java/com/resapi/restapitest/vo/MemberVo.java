@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity(name="member")
 public class MemberVo {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer mbrNo;
 
     private String id;

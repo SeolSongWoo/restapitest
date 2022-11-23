@@ -1,28 +1,50 @@
 package com.resapi.restapitest.controller;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.resapi.restapitest.Respon.Message;
+import com.resapi.restapitest.Respon.StatusEnum;
+import com.resapi.restapitest.repository.CustomRepository;
+import com.resapi.restapitest.service.CustomerService;
 import com.resapi.restapitest.service.MemberService;
+import com.resapi.restapitest.vo.CustomerVo;
 import com.resapi.restapitest.vo.MemberVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
 import java.util.*;
 
 @RestController
-@RequestMapping("api")
 public class firstController {
 
     @Autowired
     MemberService memberService;
 
+    @Autowired
+    CustomerService customerService;
+
+    @Autowired
+    CustomRepository customRepository;
+
     // 모든 회원 조회
+    @RequestMapping("users")
     @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
-    public ResponseEntity<List<MemberVo>> getAllmembers() {
-        List<MemberVo> member = memberService.findAll();
-        return new ResponseEntity<List<MemberVo>>(member, HttpStatus.OK);
+    public ResponseEntity<Message> getAllmembers() {
+        List<CustomerVo> customers = customRepository.SearchAll();
+
+        Message message = new Message();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application","json", Charset.forName("UTF-8")));
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("200");
+        message.setData(customers);
+
+        return new ResponseEntity<>(message,headers, HttpStatus.OK);
     }
 
     // 회원번호로 한명의 회원 조회
@@ -48,8 +70,8 @@ public class firstController {
 
     // 회원 입력
     @PostMapping
-    public ResponseEntity<MemberVo> save(MemberVo member) {
-        return new ResponseEntity<MemberVo>(memberService.save(member), HttpStatus.OK);
+    public ResponseEntity<CustomerVo> save(CustomerVo customer) {
+        return new ResponseEntity<CustomerVo>(customerService.save(customer), HttpStatus.OK);
     }
 
     // 회원 입력

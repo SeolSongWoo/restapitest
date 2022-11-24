@@ -6,7 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity(name="sensordata")
 public class SensorDataVo {
 
     @Id
@@ -14,10 +19,9 @@ public class SensorDataVo {
     @Column(nullable = false,name = "sensor_seq")
     private Integer sensorSeq;
 
-    @Column(nullable = true,name = "sensor_ntu")
-    private float ntu;
-    @Column(nullable = true,name = "sensor_ph")
-    private float ph;
-    @Column(nullable = true,name = "sensor_temp")
-    private float temp;
+    @Column(nullable = true,name = "sensor_name")
+    private String sensorName;
+    @Column(nullable = true,name = "sensor_value")
+    private float sensorValue;
+
 }

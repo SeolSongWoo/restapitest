@@ -1,9 +1,7 @@
 package com.resapi.restapitest.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.resapi.restapitest.vo.CustomerVo;
 import com.resapi.restapitest.vo.QCustomerVo;
-import com.resapi.restapitest.vo.SensorDataVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +12,7 @@ public class CustomRepository {
     @Autowired
     JPAQueryFactory factory;
 
+    /*
     public CustomerVo SearchId(Integer no) {
         QCustomerVo qCustomerVo = QCustomerVo.customerVo;
 
@@ -29,4 +28,7 @@ public class CustomRepository {
 
         return customerVos;
     }
+
+     */
+
 }

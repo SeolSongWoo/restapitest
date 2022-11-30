@@ -18,5 +18,7 @@ public interface SensorDataRepository extends JpaRepository<SensorDataVo,Integer
 
     public List<SensorDataVo> findAllBySensorNameAndRegDateGreaterThanEqualAndRegDateLessThanEqual(String SensorName, LocalDateTime StartDate, LocalDateTime EndDate);
 
+    public SensorDataVo findTopBySensorNameOrderByRegDateDesc(String SensorName);
+
 
 }

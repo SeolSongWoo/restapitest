@@ -22,19 +22,26 @@ public class UsersService {
 
 
 
-    public UsersVo save(UsersVo usersVo) {
+    public String save(UsersVo usersVo) {
         usersVo.hashPassword(passwordEncoder);
-        usersRepository.save(usersVo);
-        return usersVo;
+        Object nullcheck = usersRepository.saveAndFlush(usersVo);
+        if(nullcheck == null) {
+            return "회원가입실패";
+        }else {
+            return "회원가입성공";
+        }
     }
 
     public String check(String id,String password) {
         UsersVo usersVo = usersRepository.findByUsersId(id);
+        if(usersVo == null) {
+            return "계정없음";
+        }
         if(passwordEncoder.matches(password, usersVo.getUsersPassword())) {
             return "로그인성공";
         }
         else {
-            return "로그인실패";
+            return "비밀번호틀림";
         }
 
     }

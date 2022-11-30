@@ -45,6 +45,11 @@ public class SensorDataService {
         return sensorDataVoList;
     }
 
+    public SensorDataVo findTopBySensorNameOrderByRegDateDesc(String sensorName) {
+        SensorDataVo sensorDataVo = sensorDataRepository.findTopBySensorNameOrderByRegDateDesc(sensorName);
+        return sensorDataVo;
+    }
+
 
 
 }

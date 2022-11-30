@@ -135,6 +135,20 @@ public class firstController {
         return new ResponseEntity<>(message,headers, HttpStatus.OK);
     }
 
+    @GetMapping( value = "/data/{sensorName}/lastdata",produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<Message> lastdata(@PathVariable("sensorName") String sensorName) {
+        SensorDataVo sensorDataVoList = null;
+        Message message = new Message();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+            sensorDataVoList = sensorDataService.findTopBySensorNameOrderByRegDateDesc(sensorName);
+            message.setStatus(StatusEnum.OK);
+            message.setMessage("200");
+            message.setData(sensorDataVoList);
+        return new ResponseEntity<>(message,headers, HttpStatus.OK);
+    }
+
     // 회원 입력
     @PostMapping(value = "/save", produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Message> save(SensorDataVo sensorDataVo) {
@@ -150,19 +164,20 @@ public class firstController {
 
     @PostMapping(value = "/user/signup", produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Message> UserSignup(UsersVo usersVo) {
-        usersVo = usersService.save(usersVo);
+        String result = usersService.save(usersVo);
         Message message = new Message();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application","json", Charset.forName("UTF-8")));
         message.setStatus(StatusEnum.OK);
         message.setMessage("200");
-        message.setData(usersVo);
+        message.setData(result);
         return new ResponseEntity<>(message,headers, HttpStatus.OK);
     }
 
     @PostMapping(value="/user/check", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Message> userCheck(String id,String password) {
         String check = usersService.check(id,password);
+        System.out.println(id+password);
         Message message = new Message();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application","json", Charset.forName("UTF-8")));

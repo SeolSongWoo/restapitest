@@ -1,11 +1,14 @@
 package com.resapi.restapitest.controller;
 
+import com.querydsl.core.Tuple;
 import com.resapi.restapitest.Respon.Message;
 import com.resapi.restapitest.Respon.StatusEnum;
 import com.resapi.restapitest.repository.CustomRepository;
+import com.resapi.restapitest.repository.DataRangeRepository;
 import com.resapi.restapitest.repository.SensorDataRepository;
 import com.resapi.restapitest.service.SensorDataService;
 import com.resapi.restapitest.service.UsersService;
+import com.resapi.restapitest.vo.DataRangeVo;
 import com.resapi.restapitest.vo.SensorDataVo;
 import com.resapi.restapitest.vo.UsersVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
@@ -38,6 +44,9 @@ public class firstController {
 
     @Autowired
     UsersService usersService;
+
+    @Autowired
+    DataRangeRepository dataRangeRepository;
 
 
     /*
@@ -93,15 +102,42 @@ public class firstController {
 
         return new ResponseEntity<>(message,headers, HttpStatus.OK);
     }
+    @RequestMapping("data/range")
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Message> GetRange() {
+        DataRangeVo dataRangeVo = dataRangeRepository.findTopBy();
+        Message message = new Message();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application","json", Charset.forName("UTF-8")));
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("200");
+        message.setData(dataRangeVo);
+        return new ResponseEntity<>(message,headers,HttpStatus.OK);
+    }
+
+    @Transactional
+    @RequestMapping("data/range/save")
+    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Message> RangeSave(DataRangeVo dataRangeVo) {
+        dataRangeRepository.deleteAll();
+        dataRangeRepository.save(dataRangeVo);
+        Message message = new Message();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application","json", Charset.forName("UTF-8")));
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("200");
+        message.setData("성공");
+        return new ResponseEntity<>(message,headers,HttpStatus.OK);
+    }
 
     @GetMapping( value = "/data/{sensorName}",produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Message> getAllmembersbySensorName(@PathVariable("sensorName") String sensorName, String regdate) {
-        List<SensorDataVo> sensorDataVoList = null;
+        List<Object> sensorDataVoList = null;
         Message message = new Message();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
         if(regdate == null) {
-            sensorDataVoList = sensorDataService.findAllBySensorName(sensorName);
+            sensorDataVoList = sensorDataService.findSensorData(sensorName);
             if (sensorDataVoList.size() == 0) {
                 message.setStatus(StatusEnum.NOT_FOUND);
                 message.setMessage("400");
@@ -112,7 +148,7 @@ public class firstController {
             message.setData(sensorDataVoList);
         }
         else {
-            LocalDateTime StartDate = null;
+/*            LocalDateTime StartDate = null;
             LocalDateTime EndDate = null;
             try {
             StartDate = (LocalDate.parse(regdate, DateTimeFormatter.BASIC_ISO_DATE)).atStartOfDay();
@@ -130,8 +166,21 @@ public class firstController {
                 message.setStatus(StatusEnum.OK);
                 message.setMessage("200");
             }
-            message.setData(sensorDataVoList);
+            message.setData(sensorDataVoList);*/
         }
+        return new ResponseEntity<>(message,headers, HttpStatus.OK);
+    }
+/*
+    @GetMapping( value = "/data/{sensorName}/lastdata",produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<Message> getlastsensorData(@PathVariable("sensorName") String sensorName) {
+        SensorDataVo sensorDataVoList = null;
+        Message message = new Message();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+        sensorDataVoList = sensorDataService.findTopBySensorNameOrderByRegDateDesc(sensorName);
+        message.setStatus(StatusEnum.OK);
+        message.setMessage("200");
+        message.setData(sensorDataVoList);
         return new ResponseEntity<>(message,headers, HttpStatus.OK);
     }
 
@@ -147,7 +196,7 @@ public class firstController {
             message.setMessage("200");
             message.setData(sensorDataVoList);
         return new ResponseEntity<>(message,headers, HttpStatus.OK);
-    }
+    }*/
 
     // 회원 입력
     @PostMapping(value = "/save", produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -187,5 +236,6 @@ public class firstController {
 
         return new ResponseEntity<>(message,headers, HttpStatus.OK);
     }
+
 
 }

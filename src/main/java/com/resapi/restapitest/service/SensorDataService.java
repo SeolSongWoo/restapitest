@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,12 +24,26 @@ public class SensorDataService {
         return sensorDataVo;
     }
 
-    public List<SensorDataVo> findAllBySensorName(String sensorName) {
+    public List<Object> findSensorData(String sensorName) {
+        List<Object> sensorDataVo = null;
+        if(sensorName.equals("ntu")) {
+            sensorDataVo = sensorDataRepository.findNtuAll();
+        }else if(sensorName.equals("ph")) {
+            sensorDataVo = sensorDataRepository.findPhAll();
+        }else if(sensorName.equals("temp")) {
+            sensorDataVo = sensorDataRepository.findTempAll();
+        }else {
+            sensorDataVo = Collections.singletonList(sensorDataRepository.findAll());
+        }
+        return sensorDataVo;
+    }
+
+/*    public List<SensorDataVo> findAllBySensorName(String sensorName) {
         List<SensorDataVo> sensorDataVoList = null;
         if(sensorName.equals("all")) {
             sensorDataVoList = sensorDataRepository.findAll();
         } else{
-            sensorDataVoList = sensorDataRepository.findAllBySensorName(sensorName);
+            sensorDataVoList = sensorDataRepository.findAllBySensorNameOrderByRegDateDesc(sensorName);
         }
 
         return sensorDataVoList;
@@ -49,6 +64,12 @@ public class SensorDataService {
         SensorDataVo sensorDataVo = sensorDataRepository.findTopBySensorNameOrderByRegDateDesc(sensorName);
         return sensorDataVo;
     }
+
+    public SensorDataVo findTopBySensorNameOrderByRegDateDesc(String sensorName) {
+        SensorDataVo sensorDataVo;
+        sensorDataVo = sensorDataRepository.findTopBySensorNameOrderByRegDateDesc(sensorName);
+        return sensorDataVo;
+    }*/
 
 
 
